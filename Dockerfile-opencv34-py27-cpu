@@ -1,0 +1,35 @@
+FROM ubuntu:xenial
+
+RUN apt-get update
+RUN apt-get install -y \
+    cmake \
+    git \
+    libavcodec-dev \
+    libavformat-dev \
+    libdc1394-22-dev \
+    libgtk2.0-dev \
+    libjasper-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libswscale-dev \
+    libtbb-dev \
+    libtbb2 \
+    libtiff-dev \
+    pkg-config \
+    python-dev \
+    python-numpy \
+    unzip \
+    wget
+
+WORKDIR /opencv
+RUN wget -O opencv.zip https://github.com/opencv/opencv/archive/3.4.0.zip
+RUN wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/3.4.0.zip
+RUN unzip opencv.zip
+RUN unzip opencv_contrib.zip
+WORKDIR /opencv/opencv-3.4.0/build
+RUN cmake -DOPENCV_EXTRA_MODULES_PATH=/opencv/opencv_contrib-3.4.0/modules ..
+RUN make
+RUN make install
+RUN rm -rf /opencv
+WORKDIR /
+
