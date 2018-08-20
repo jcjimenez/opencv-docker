@@ -45,7 +45,9 @@ RUN apk add --update --no-cache \
 # Install opencv
 WORKDIR /opencv
 RUN wget -O opencv.zip https://github.com/opencv/opencv/archive/3.4.0.zip
+RUN wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/3.4.0.zip
 RUN unzip opencv.zip
+RUN unzip opencv_contrib.zip
 WORKDIR /opencv/opencv-3.4.0/build
 RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
       -D CMAKE_INSTALL_PREFIX=/usr \
@@ -55,6 +57,7 @@ RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
       -D WITH_V4L=ON \
       -D WITH_QT=OFF \
       -D WITH_OPENGL=ON \
+      -D OPENCV_EXTRA_MODULES_PATH=/opencv/opencv_contrib-3.4.0/modules \
       -D BUILD_DOCS=OFF \
       -D BUILD_PERF_TESTS=OFF \
       -D BUILD_TESTS=OFF \
@@ -63,4 +66,6 @@ RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
 RUN make
 RUN make install
 WORKDIR /
-RUN python2 -c 'import cv2' && rm -rf /opencv
+#RUN ln -s /usr/local/lib/python2.7/site-packages/cv2.so /usr/lib/python2.7/cv2.so
+RUN rm -rf /opencv
+
