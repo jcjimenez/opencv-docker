@@ -1,0 +1,67 @@
+FROM alpine:3.8
+
+RUN apk add --update --no-cache \
+    alpine-sdk \
+    binutils \
+    build-base \
+    bzip2 \
+    clang-dev \
+    cmake \
+    curl \
+    ffmpeg \
+    ffmpeg-dev \
+    gcc \
+    gfortran \
+    git \
+    libavc1394 \
+    libavc1394-dev \
+    libc6-compat \
+    libdc1394 \
+    libdc1394-dev \
+    libgphoto2-dev \
+    libjpeg \
+    libjpeg-turbo-dev \
+    libpng \
+    libpng-dev \
+    libtheora-dev \
+    linux-headers \
+    ltb-project-ssp \
+    make \
+    musl-dev \
+    openblas-dev \
+    protobuf \
+    py-numpy-dev \
+    py3-numpy \
+    py3-pip \
+    python3-dev \
+    qt-dev \
+    tiff-dev \
+    unzip \
+    v4l-utils \
+    wget \
+    x264 \
+    yasm
+
+# Install opencv
+WORKDIR /opencv
+RUN wget -O opencv.zip https://github.com/opencv/opencv/archive/3.4.0.zip
+RUN unzip opencv.zip
+WORKDIR /opencv/opencv-3.4.0/build
+RUN cmake -DPYTHON_DEFAULT_EXECUTABLE=/usr/bin/python3 -D CMAKE_BUILD_TYPE=RELEASE \
+      -D CMAKE_INSTALL_PREFIX=/usr \
+      -D INSTALL_C_EXAMPLES=OFF \
+      -D INSTALL_PYTHON_EXAMPLES=OFF \
+      -D WITH_TBB=ON \
+      -D WITH_V4L=ON \
+      -D WITH_QT=OFF \
+      -D WITH_OPENGL=ON \
+      -D BUILD_DOCS=OFF \
+      -D BUILD_PERF_TESTS=OFF \
+      -D BUILD_TESTS=OFF \
+      -D BUILD_opencv_apps=OFF \
+      -D BUILD_EXAMPLES=OFF ..
+RUN make
+RUN make install
+WORKDIR /
+RUN python3 -c 'import cv2' && rm -rf /opencv
+
